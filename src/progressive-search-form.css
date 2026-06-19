@@ -1,0 +1,192 @@
+/* progressive-search-form demo styles
+ * Author: Uli Schäffler
+ * License: MIT
+ */
+
+progressive-search-form {
+  display: block;
+}
+
+progressive-search-form template {
+  display: none;
+}
+
+.visually-hidden:not(:focus-within):not(:active) {
+  position: absolute !important;
+  clip-path: inset(50%) !important;
+  overflow: hidden !important;
+  inline-size: 1px !important;
+  block-size: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  white-space: nowrap !important;
+}
+
+.search-form {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: end;
+  gap: 1rem;
+  margin-block: 1rem;
+  padding: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.75rem;
+}
+
+.search-form__field {
+  flex: 1 1 16rem;
+  min-inline-size: 0;
+}
+
+.search-form label {
+  display: block;
+  margin-block-end: 0.25rem;
+  font-weight: 700;
+}
+
+.search-form__hint {
+  margin-block: 0 0.5rem;
+  color: #4b5563;
+  font-size: 0.95rem;
+}
+
+.search-form input[type='search'],
+.search-form select {
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-block-size: 3rem;
+  padding-block: 0.75rem;
+  padding-inline: 0.875rem;
+  border: 1px solid #6b7280;
+  border-radius: 0.5rem;
+  font: inherit;
+}
+
+.search-form__button,
+.pagination button,
+.pagination__link {
+  min-block-size: 3rem;
+  padding-block: 0.75rem;
+  padding-inline: 1rem;
+  border: 2px solid #0f5bd8;
+  border-radius: 0.5rem;
+  background: #0f5bd8;
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+}
+
+.search-form__button:hover,
+.pagination button:hover,
+.pagination__link:hover {
+  text-decoration: underline;
+}
+
+.pagination button:disabled,
+.pagination__link.is-disabled {
+  border-color: #d1d5db;
+  background: #f3f4f6;
+  color: #4b5563;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+.search-form__progress {
+  flex-basis: 100%;
+  inline-size: 100%;
+  block-size: 0.5rem;
+}
+
+.search-results {
+  margin-block-start: 1rem;
+  padding: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.75rem;
+}
+
+.search-results[aria-busy='true'] {
+  cursor: progress;
+}
+
+.search-result-count {
+  margin-block: 0 1rem;
+  color: #4b5563;
+}
+
+.result-list {
+  display: grid;
+  gap: 1rem;
+  padding-inline-start: 1.5rem;
+}
+
+.result-card {
+  padding: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.75rem;
+}
+
+.result-card h3 {
+  margin-block: 0 0.5rem;
+}
+
+.result-card p {
+  max-inline-size: 80ch;
+  margin-block: 0.5rem 0;
+}
+
+.result-card__meta {
+  color: #4b5563;
+  font-size: 0.95rem;
+}
+
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-block-start: 1.5rem;
+}
+
+.pagination__status {
+  color: #4b5563;
+  font-weight: 700;
+}
+
+.search-error {
+  padding: 1rem;
+  border: 1px solid currentColor;
+  border-radius: 0.5rem;
+  background: #fff1f2;
+  color: #9f1239;
+  font-weight: 700;
+}
+
+.result-json-fallback {
+  overflow: auto;
+  padding: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  white-space: pre-wrap;
+}
+
+:where(a, button, input, select, [tabindex]):focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 3px;
+}
+
+@media (max-width: 42rem) {
+  .search-form,
+  .pagination {
+    display: grid;
+  }
+
+  .search-form__button,
+  .pagination button,
+  .pagination__link {
+    inline-size: 100%;
+  }
+}
