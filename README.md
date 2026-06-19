@@ -7,12 +7,12 @@ License: MIT
 
 It supports two backend styles:
 
-1. **HTML mode**: the backend returns ready-to-insert HTML. This is the best progressive enhancement mode because the form can still work without JavaScript.
+1. **HTML mode**: the backend returns ready-to-insert HTML. This is the strongest progressive enhancement mode because the form can still work without JavaScript.
 2. **JSON mode**: the backend returns JSON. The component renders the results with a trusted HTML `<template>` inside the custom element.
 
-The component is intentionally framework-free and keeps the actual form in light DOM. That means your normal CSS, labels, inputs, buttons and backend behavior continue to work.
+The component is framework-free, keeps the actual form in light DOM and does not force a visual design. Your normal CSS, labels, inputs, buttons and backend behavior continue to work.
 
-## What it does
+## Features
 
 - Enhances normal `GET` forms with `fetch()`.
 - Keeps native form behavior as the baseline.
@@ -23,13 +23,45 @@ The component is intentionally framework-free and keeps the actual form in light
 - Adds `aria-busy` while loading.
 - Adds a polite live region for result announcements.
 - Moves focus to results after manual searches.
-- Uses `AbortController` to cancel outdated requests.
+- Cancels outdated requests with `AbortController`.
 - Dispatches custom events for analytics and integration.
 - Inserts JSON values safely with `textContent`, checked URLs and whitelisted attributes.
 
+## File structure
+
+```text
+progressive-search-form/
+  src/
+    progressive-search-form.js
+    progressive-search-form.css
+  demo/
+    index.php
+  package.json
+  README.md
+  LICENSE
+```
+
+The PHP demo is only an example backend. The library itself is the JavaScript file in `src/`.
+
+## Run the demo
+
+From the repository root, run PHP's built-in server:
+
+```bash
+php -S localhost:8000
+```
+
+Then open:
+
+```text
+http://localhost:8000/demo/index.php
+```
+
+The demo loads the library from `../src/`, so the repository root must be served as the document root.
+
 ## Quick start: HTML backend
 
-HTML mode is the most robust version. The backend renders the complete result markup. Without JavaScript, the browser simply submits the form and receives a normal results page. With JavaScript, only the result section is updated.
+HTML mode is best when your backend can render results as HTML. Without JavaScript, the browser submits the form and receives a normal results page. With JavaScript, only the result section is updated.
 
 ```html
 <link rel="stylesheet" href="src/progressive-search-form.css">
@@ -59,22 +91,19 @@ HTML mode is the most robust version. The backend renders the complete result ma
 </section>
 ```
 
-Your backend can return either the whole page or only the inner result fragment for enhanced requests. The component accepts both. If the response contains an element matching `results`, its children are used. Otherwise the complete response body is used as the new result content.
-
 Enhanced requests include this header:
 
 ```http
 X-Progressive-Search: 1
 ```
 
-## Quick start: JSON backend with template
+Your backend can return either a whole page or only the inner result fragment. If the response contains an element matching the configured `results` selector, the component uses its children. Otherwise the complete response body is used as result content.
 
-JSON mode is useful when your backend is an API. The output is controlled by a trusted HTML template inside the custom element.
+## Quick start: JSON backend
+
+JSON mode is useful when the backend is an API. The output is controlled by a trusted HTML template inside the custom element.
 
 ```html
-<link rel="stylesheet" href="src/progressive-search-form.css">
-<script type="module" src="src/progressive-search-form.js"></script>
-
 <progressive-search-form
   response-type="json"
   results="#search-results"
@@ -140,89 +169,11 @@ Expected JSON:
 }
 ```
 
-## File structure
-
-Recommended project structure:
-
-```text
-progressive-search-form/
-  src/
-    progressive-search-form.js
-    progressive-search-form.css
-  demo/
-    index.php
-  README.md
-  LICENSE
-```
-
-The PHP demo is not part of the library. It is only an example backend.
-
-## Run the demo
-
-From the repository root:
-
-```bash
-php -S localhost:8000 -t demo
-```
-
-Then open:
-
-```text
-http://localhost:8000
-```
-
-Because the demo loads files from `../src`, you may also serve the repository root and open `demo/index.php`, depending on your local PHP setup.
-
-## HTML mode
-
-Use HTML mode when you want the strongest progressive enhancement story.
-
-```html
-<progressive-search-form response-type="html" results="#search-results">
-  <form action="/search.php" method="get" role="search" aria-controls="search-results">
-    ...
-  </form>
-</progressive-search-form>
-```
-
-The backend should:
-
-- accept normal `GET` requests
-- render a complete usable page without JavaScript
-- return a result section with a heading and result count
-- optionally return only the result fragment when `X-Progressive-Search: 1` is present
-- escape all HTML output
-- validate input and filter values
-- limit result count
-- return normal pagination links for no-JS use
-
-HTML mode uses `Element.setHTML()` for enhanced updates. If `setHTML()` is not available, the component does not enhance the form. The normal browser form submission remains available.
-
-## JSON mode
-
-Use JSON mode when your backend is an API and you want to render results in the browser.
-
-```html
-<progressive-search-form
-  response-type="json"
-  results="#search-results"
-  items-path="records"
->
-  <form action="/api/search.php" method="get" role="search" aria-controls="search-results">
-    ...
-  </form>
-
-  <template data-result-template>
-    ...
-  </template>
-</progressive-search-form>
-```
-
-In JSON mode, the component needs JavaScript to render useful results. Without JavaScript, the browser will navigate to the JSON endpoint unless you provide a separate HTML fallback.
+In JSON mode, JavaScript is required for useful results. Without JavaScript, the browser will navigate to the JSON endpoint unless you provide a separate HTML fallback.
 
 ## Template bindings
 
-The result template is trusted HTML written by you. Data from JSON is inserted safely.
+The template is trusted HTML written by you. Data from JSON is inserted safely.
 
 ### `data-text`
 
@@ -286,14 +237,12 @@ Direct keys are useful for metadata formats such as CSW or Dublin Core:
 }
 ```
 
-Template:
-
 ```html
 <a data-text="dc:title"></a>
 <time data-text="dct:modified" data-attr-datetime="dct:modified"></time>
 ```
 
-Nested paths are also supported:
+Nested paths are supported as well:
 
 ```json
 {
@@ -302,8 +251,6 @@ Nested paths are also supported:
   }
 }
 ```
-
-Template:
 
 ```html
 <span data-text="metadata.title"></span>
@@ -315,7 +262,7 @@ Pagination is intentionally simple: previous / next.
 
 ### HTML mode pagination
 
-In HTML mode the backend should render normal links.
+In HTML mode the backend renders normal links:
 
 ```html
 <nav class="pagination" aria-label="Search result pages">
@@ -325,7 +272,7 @@ In HTML mode the backend should render normal links.
 </nav>
 ```
 
-The `data-search-page-link` attribute tells the component that this link can be fetched and used to update the current result section. Without JavaScript, it is still a normal link.
+`data-search-page-link` tells the component that this link can be fetched and used to update the current result section. Without JavaScript, it remains a normal link.
 
 ### JSON mode pagination
 
@@ -351,7 +298,7 @@ Add a pagination template:
 </template>
 ```
 
-The backend should return:
+Return pagination metadata from the backend:
 
 ```json
 {
@@ -367,7 +314,7 @@ The component updates the hidden page input and runs the search again.
 
 ### CSW mapping
 
-For a CSW `GetRecords` backend, you can map page and limit to `startPosition` and `maxRecords`:
+For CSW `GetRecords`, map `page` and `limit` to `startPosition` and `maxRecords`:
 
 ```php
 $startPosition = (($page - 1) * $limit) + 1;
@@ -522,14 +469,14 @@ A production backend should:
 
 ## Backend tips
 
-### Query normalization
+Normalize query values:
 
 ```php
 $query = trim($_GET['q'] ?? '');
 $query = mb_substr($query, 0, 100, 'UTF-8');
 ```
 
-### Filter whitelist
+Whitelist filters:
 
 ```php
 $allowedTypes = ['', 'article', 'download', 'tool', 'event'];
@@ -540,7 +487,7 @@ if (!in_array($type, $allowedTypes, true)) {
 }
 ```
 
-### Page and limit
+Limit pagination:
 
 ```php
 $page = max(1, (int) ($_GET['page'] ?? 1));
@@ -548,14 +495,14 @@ $limit = min(50, max(1, (int) ($_GET['limit'] ?? 10)));
 $offset = ($page - 1) * $limit;
 ```
 
-### JSON headers
+Set JSON headers:
 
 ```php
 header('Content-Type: application/json; charset=UTF-8');
 header('X-Content-Type-Options: nosniff');
 ```
 
-### HTML headers
+Set HTML headers:
 
 ```php
 header('Content-Type: text/html; charset=UTF-8');
