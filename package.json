@@ -1,0 +1,23 @@
+{
+  "name": "progressive-search-form",
+  "version": "0.1.0",
+  "description": "A Web Component by Uli Schäffler for progressively enhancing GET search forms with HTML or JSON backends.",
+  "author": "Uli Schäffler",
+  "license": "MIT",
+  "type": "module",
+  "main": "src/progressive-search-form.js",
+  "files": [
+    "src",
+    "demo",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "web-component",
+    "progressive-enhancement",
+    "search",
+    "forms",
+    "accessibility",
+    "pagination"
+  ]
+}
